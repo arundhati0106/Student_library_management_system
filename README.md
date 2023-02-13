@@ -7,7 +7,7 @@
 
 ## Features
 - Built a Student Library System, that allows us to perform basic CRUD operations in student
-- Card entity is associated with Student entity, in the sense that student entity is the parent class
-- Made database named library_mgmt, with 2 tables in the beginning, student and card
-- Relationship extablished between entity layers - bidirectional
-- One to One mapping of card and student
+- Made database named library_mgmt, made 2 tables initially, student, card
+- Card entity is essentially associated with Student entity.
+- Relationship between the two - One to One mapping, bidirectional
+- auto generated ids of both tables
