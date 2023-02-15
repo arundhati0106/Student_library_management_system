@@ -5,7 +5,9 @@ import jakarta.persistence.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 @Entity
 @Table(name = "card")
@@ -34,27 +36,25 @@ att #5 -> student, foreign key
     @Enumerated(value = EnumType.STRING) //sets foreign key
     private CardStatus cardStatus;
 
-    //unidirectional mapping
+    //unidirectional mapping -> card: student :: Child: Parent :: One: One
     @OneToOne
     @JoinColumn
     //make an object of parent entity, to which connection is to be made with
     //student -> variable name of Parent class entity, foreign key attribute
     private Student student; //used in parent class, for bidirectional mapping
 
+    //bidirectional mapping -> card: book :: Parent: Child :: One: Many
+    //many books can be issued from one card
+    @OneToMany(mappedBy = "card", cascade = CascadeType.ALL)
+    private List<Book> booksIssued;
+
     //constructors
     public Card() {
-
-    }
-
-    public Card(int id, Date createdOn, Date updatedOn, CardStatus cardStatus) {
-        this.id = id;
-        this.createdOn = createdOn;
-        this.updatedOn = updatedOn;
-        this.cardStatus = cardStatus;
+        //initialise the books issued list
+        booksIssued = new ArrayList<>();
     }
 
     //getters and setters
-
     public Student getStudent() { return student; }
     public void setStudent(Student student) { this.student = student; }
 
@@ -69,4 +69,7 @@ att #5 -> student, foreign key
 
     public CardStatus getCardStatus() { return cardStatus; }
     public void setCardStatus(CardStatus cardStatus) { this.cardStatus = cardStatus; }
+
+    public List<Book> getBooksIssued() { return booksIssued; }
+    public void setBooksIssued(List<Book> booksIssued) { this.booksIssued = booksIssued; }
 }

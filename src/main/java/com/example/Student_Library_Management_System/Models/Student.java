@@ -25,7 +25,9 @@ att #3 -> Card entity attribute, set in student service
 
     //bidirectional mapping
     //name of variable of parent entity, that was written in child class, foreign key attribute
+    //cascade -> ensures that if parent class data is deleted, child class data associated to it gets deleted as well
     @OneToOne(mappedBy = "student", cascade = CascadeType.ALL)
+    //in case of OneToOne mapping -> one child class entity is associated, so ->
     private Card card;
 
     //constructors
