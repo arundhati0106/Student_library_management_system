@@ -7,6 +7,8 @@ import com.example.Student_Library_Management_System.Repository.StudentRepositor
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class StudentService {
     @Autowired
@@ -32,6 +34,38 @@ public class StudentService {
         studentRepository.save(student);
 
         return "Student and card added";
+    }
+
+    public String findNameByEmail(String email) {
+        Student student = null;
+        try {
+            student = studentRepository.findByEmail(email);
+        }
+        catch(Exception e) { //make custom exception
+            System.out.println("Entered email is not registered.");
+        }
+        return student.getName();
+    }
+
+    public String findNamesByCountry(String country) {
+        List<Student> students = studentRepository.findByCountry(country);
+        return "";
+    }
+
+    //we call existing student, and update only reqd params, instead of update the entire new
+    //student, as that would result in data loss... null entries
+    //params passed -> id , mobile, so rest params -> null, all attributes updated
+    public String updateMobile(Student newStudent) {
+        //fetch original data, existing data of student
+        Student existingStudent = studentRepository.findById(newStudent.getId()).get();
+
+        //keep other properties as it is, update only the required params
+        existingStudent.setMobile(newStudent.getMobile());
+
+        //update
+        studentRepository.save(existingStudent);
+
+        return "mobile of student " +existingStudent.getName() +" has been updated.";
     }
 
 }
