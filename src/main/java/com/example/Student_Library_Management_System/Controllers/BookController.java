@@ -1,5 +1,6 @@
 package com.example.Student_Library_Management_System.Controllers;
 
+import com.example.Student_Library_Management_System.DTOs.BookRequestDTO;
 import com.example.Student_Library_Management_System.Models.Book;
 import com.example.Student_Library_Management_System.Service.BookService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,10 +15,16 @@ public class BookController {
     @Autowired
     BookService bookService;
 
+//    @PostMapping("add")
+//    public String addBook(@RequestBody Book book) {
+//        return bookService.addBook(book);
+//    }
+
     @PostMapping("add")
-    public String addBook(@RequestBody Book book) {
-        return bookService.addBook(book);
+    public String addBook(@RequestBody BookRequestDTO bookRequestDTO) {
+        return bookService.addBook(bookRequestDTO);
     }
+
 
     /*
     while creating a book, we want both book <object of Book>, and author name/id

@@ -1,5 +1,6 @@
 package com.example.Student_Library_Management_System.Service;
 
+import com.example.Student_Library_Management_System.DTOs.BookRequestDTO;
 import com.example.Student_Library_Management_System.Models.Author;
 import com.example.Student_Library_Management_System.Models.Book;
 import com.example.Student_Library_Management_System.Repository.AuthorRepository;
@@ -17,6 +18,7 @@ public class BookService {
     @Autowired
     AuthorRepository authorRepository;
 
+    /*
     public String addBook(Book book) {
         //want to get object of author entity ... from postman
         //1. get its id, from book object -> author -> id
@@ -52,6 +54,34 @@ public class BookService {
 
         //if we write ->
         //bookRepository.save(book); -> will create a duplicate entry
+        return "Book added successfully.";
+    }
+    */
+
+    public String addBook(BookRequestDTO bookRequestDTO) {
+        //find author from author repo, by searching by ID, from user input i.e. DTO
+        Author author = authorRepository.findById(bookRequestDTO.getAuthorId()).get();
+
+        //create book entity, save it to db
+        Book book = new Book();
+
+        //set basic attributes, from DTO to entity
+        book.setName(bookRequestDTO.getName());
+        book.setGenre(bookRequestDTO.getGenre());
+        book.setPages(bookRequestDTO.getPages());
+        book.setRating(bookRequestDTO.getRating());
+
+        //set foreign key attribute
+        book.setAuthor(author);
+
+        //update list of books written, add curr one
+        List<Book> curr_booksWritten = author.getBooksWritten();
+        curr_booksWritten.add(book);
+        author.setBooksWritten(curr_booksWritten);
+
+        //save book
+        authorRepository.save(author); //save works as both save and update
+
         return "Book added successfully.";
     }
     /*

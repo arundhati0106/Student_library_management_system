@@ -1,5 +1,6 @@
 package com.example.Student_Library_Management_System.Service;
 
+import com.example.Student_Library_Management_System.DTOs.StudentMobileUpdateDTO;
 import com.example.Student_Library_Management_System.Enums.CardStatus;
 import com.example.Student_Library_Management_System.Models.Card;
 import com.example.Student_Library_Management_System.Models.Student;
@@ -52,6 +53,7 @@ public class StudentService {
         return "";
     }
 
+    /*
     //we call existing student, and update only reqd params, instead of update the entire new
     //student, as that would result in data loss... null entries
     //params passed -> id , mobile, so rest params -> null, all attributes updated
@@ -67,5 +69,24 @@ public class StudentService {
 
         return "mobile of student " +existingStudent.getName() +" has been updated.";
     }
+    */
+
+    //using DTO
+    public String updateMobile(StudentMobileUpdateDTO studentDTO) {
+        //param -> DTO object
+        //repo -> deals with only entity object
+
+        //1. create entity object, by getting id of studentDTO
+        Student student = studentRepository.findById(studentDTO.getId()).get();
+
+        //2. set mob no
+        student.setMobile(studentDTO.getMobile());
+
+        //3. save entity
+        studentRepository.save(student);
+
+        return "mobile of student " + student.getName() +" has been updated.";
+    }
+
 
 }

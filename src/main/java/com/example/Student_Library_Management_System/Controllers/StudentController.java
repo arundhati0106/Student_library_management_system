@@ -1,5 +1,6 @@
 package com.example.Student_Library_Management_System.Controllers;
 
+import com.example.Student_Library_Management_System.DTOs.StudentMobileUpdateDTO;
 import com.example.Student_Library_Management_System.Enums.CardStatus;
 import com.example.Student_Library_Management_System.Models.Card;
 import com.example.Student_Library_Management_System.Models.Student;
@@ -23,9 +24,15 @@ public class StudentController {
         return studentService.findNameByEmail(email);
     }
 
-    @PutMapping("/update_mobile")
-    public String updateMobile(@RequestBody Student student) {
-        return studentService.updateMobile(student);
+//    @PutMapping("/update_mobile")
+//    public String updateMobile(@RequestBody Student student) {
+//        return studentService.updateMobile(student);
+//    }
+
+    //use DTO -> lighter than using entire entity with multiple attribute, faster API
+    @PutMapping("update_mobile")
+    public String updateMobile(@RequestBody StudentMobileUpdateDTO studentMobileUpdateDTO) {
+        return studentService.updateMobile(studentMobileUpdateDTO);
     }
 
 }
