@@ -157,7 +157,7 @@ public class TransactionService {
         double fine = 0;
 
         if(days > 10) {
-            fine = 10 * (days - 14);
+            fine = 10 * (days - 10);
         }
 
         //set attributes of book
