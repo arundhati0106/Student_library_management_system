@@ -20,7 +20,8 @@ public class Transaction {
 
     private int fine;
 
-    //trans type -> issued/ returned,
+    //trans type -> issued/ returned
+    @Column(name = "Transaction_type")
     @Enumerated(value = EnumType.STRING)
     private TransactionType transactionType;
 

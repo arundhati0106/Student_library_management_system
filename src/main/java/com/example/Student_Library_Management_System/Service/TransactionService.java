@@ -14,6 +14,7 @@ import com.example.Student_Library_Management_System.Repository.TransactionRepos
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
@@ -60,6 +61,14 @@ public class TransactionService {
             transaction.setTransactionStatus(TransactionStatus.FAILED);
             transactionRepository.save(transaction);
             throw new Exception("Card is not valid");
+        }
+
+        //3. Card has reached max potential
+        List<Book> booksIssued = card.getBooksIssued();
+        if(booksIssued.size() == 5) {
+            transaction.setTransactionStatus(TransactionStatus.FAILED);
+            transactionRepository.save(transaction);
+            throw new Exception("Card has reached max potential. \n Return a book, before issuing a new one");
         }
 
         //transaction success -> save
@@ -112,19 +121,21 @@ public class TransactionService {
         //save transaction record even if status is not success -> eg: money transactions are recorded, GPAY
         //mandatory validation or checks
 
-        //1. book doesnt exist, or book is not issued
+        //1. book doesnt exist
         if (book == null) {
             transaction.setTransactionStatus(TransactionStatus.FAILED);
             transactionRepository.save(transaction);
             throw new Exception("Book is not available");
         }
+
+        //2. book isnt issued, cant be returned
         if (!book.isIssued() == true) {
             transaction.setTransactionStatus(TransactionStatus.FAILED);
             transactionRepository.save(transaction);
             throw new Exception("Book is not issued, so cant be returned");
         }
 
-        //2. card is not valid
+        //3. card is not valid
         if (card == null || !card.getCardStatus().equals(CardStatus.ACTIVATED)) {
             transaction.setTransactionStatus(TransactionStatus.FAILED);
             transactionRepository.save(transaction);
@@ -134,6 +145,21 @@ public class TransactionService {
         //transaction success -> save
         transaction.setTransactionStatus(TransactionStatus.SUCCESS);
 
+        //calculate fine
+        //fine charged after 2 weeks (14 days), @ Rs.10 / day
+        List<Transaction> transactions = transactionRepository.findTransaction(cardId, bookId, TransactionType.ISSUE, TransactionStatus.SUCCESS);
+        Transaction returnTransaction = transactions.get(transactions.size() - 1);
+
+        Date issueDate = returnTransaction.getTransactionDate();
+        Date returnDate = new Date();
+
+        long days = findDifference(issueDate, returnDate);
+        double fine = 0;
+
+        if(days > 10) {
+            fine = 10 * (days - 14);
+        }
+
         //set attributes of book
         //1. set book as issued
         book.setIssued(false);
@@ -142,6 +168,9 @@ public class TransactionService {
         List<Transaction> listOfTransactionsMadeOnBook = book.getListOfTransactions();
         listOfTransactionsMadeOnBook.add(transaction);
         book.setListOfTransactions(listOfTransactionsMadeOnBook);
+
+        //3. set fine
+        transaction.setFine((int)fine);
 
         //set attributes of card
         //update list of transactions made by this card... Card and Transaction
@@ -154,5 +183,16 @@ public class TransactionService {
         cardRepository.save(card);
 
         return "transaction recorded";
+    }
+
+    static long findDifference(Date issueDate, Date returnDate) {
+        long difference_In_Time = returnDate.getTime() - issueDate.getTime();
+        long difference_In_Seconds = (difference_In_Time / 1000) % 60;
+        long difference_In_Minutes = (difference_In_Time / (1000 * 60)) % 60;
+        long difference_In_Hours = (difference_In_Time / (1000 * 60 * 60)) % 24;
+        long difference_In_Years = (difference_In_Time / (1000l * 60 * 60 * 24 * 365));
+        long difference_In_Days = (difference_In_Time / (1000 * 60 * 60 * 24)) % 365;
+
+        return difference_In_Days;
     }
 }
