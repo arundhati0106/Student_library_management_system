@@ -3,6 +3,7 @@ package com.example.Student_Library_Management_System.Models;
 import com.example.Student_Library_Management_System.Enums.BookGenre;
 import jakarta.persistence.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /*
@@ -22,6 +23,7 @@ public class Book {
     @Enumerated(value = EnumType.STRING)
     private BookGenre genre;
 
+    //mapping
     //unidirectional mapping -> book: author :: Child: Parent :: Many: One
     //set foreign key -> 3 steps -
     @ManyToOne
@@ -32,6 +34,10 @@ public class Book {
     @ManyToOne
     @JoinColumn
     private Card card;
+
+    //bidirectional mapping -> book: transaction:: Parent: Child :: 1: Many
+    @OneToMany(mappedBy = "book", cascade = CascadeType.ALL)
+    private List<Transaction> listOfTransactions = new ArrayList<>();
 
     //constructor
     public Book() {
@@ -62,4 +68,7 @@ public class Book {
 
     public boolean isIssued() { return issued; }
     public void setIssued(boolean issued) { this.issued = issued; }
+
+    public List<Transaction> getListOfTransactions() { return listOfTransactions; }
+    public void setListOfTransactions(List<Transaction> listOfTransactions) { this.listOfTransactions = listOfTransactions; }
 }

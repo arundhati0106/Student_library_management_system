@@ -36,6 +36,7 @@ att #5 -> student, foreign key
     @Enumerated(value = EnumType.STRING) //sets foreign key
     private CardStatus cardStatus;
 
+    //mapping
     //unidirectional mapping -> card: student :: Child: Parent :: One: One
     @OneToOne
     @JoinColumn
@@ -47,6 +48,10 @@ att #5 -> student, foreign key
     //many books can be issued from one card
     @OneToMany(mappedBy = "card", cascade = CascadeType.ALL)
     private List<Book> booksIssued;
+
+    //bidirectional mapping -> card: transaction :: Parent: Child :: 1: many
+    @OneToMany(mappedBy = "card", cascade = CascadeType.ALL)
+    private List<Transaction> transactionList = new ArrayList<>();
 
     //constructors
     public Card() {
@@ -72,4 +77,7 @@ att #5 -> student, foreign key
 
     public List<Book> getBooksIssued() { return booksIssued; }
     public void setBooksIssued(List<Book> booksIssued) { this.booksIssued = booksIssued; }
+
+    public List<Transaction> getTransactionList() { return transactionList; }
+    public void setTransactionList(List<Transaction> transactionList) { this.transactionList = transactionList; }
 }
