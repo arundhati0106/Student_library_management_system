@@ -1,6 +1,8 @@
 package com.example.Student_Library_Management_System.Models;
 
 import com.example.Student_Library_Management_System.Enums.BookGenre;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 
 import java.util.ArrayList;
@@ -18,6 +20,8 @@ public class Author {
 
     //bidirectional mapping
     @OneToMany(mappedBy = "author", cascade = CascadeType.ALL) //Author: Book :: One: Many
+    //@JsonIgnore / @JsonIgnoreProperties -> ignore recursion calls
+
     //many child class entities are associated with one parent class object, so a list of child class object
     private List<Book> booksWritten;
     //this attribute is not set while adding an author, it's set when a book

@@ -1,10 +1,16 @@
 package com.example.Student_Library_Management_System.Service;
 
 import com.example.Student_Library_Management_System.DTOs.AuthorRequestDTO;
+import com.example.Student_Library_Management_System.DTOs.AuthorResponseDTO;
+import com.example.Student_Library_Management_System.DTOs.BookResponseDTO;
 import com.example.Student_Library_Management_System.Models.Author;
+import com.example.Student_Library_Management_System.Models.Book;
 import com.example.Student_Library_Management_System.Repository.AuthorRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 public class AuthorService {
@@ -35,5 +41,46 @@ public class AuthorService {
         //save changes
         authorRepository.save(author);
         return "Author added successfully.";
+    }
+
+    //infinite recursion
+//    public Author getAuthor(Integer authorId) {
+//        return authorRepository.findById(authorId).get();
+//    }
+
+    public AuthorResponseDTO getAuthor(Integer authorId) {
+        //extract required values from author and put in authorResponseDTO
+        Author author = authorRepository.findById(authorId).get();
+
+        //create response DTO
+        AuthorResponseDTO authorResponseDTO = new AuthorResponseDTO();
+
+        //set attributes for bookResponseDTO
+        //1. get list of books written
+        List<Book> booksWritten = author.getBooksWritten();
+
+        //2. convert book list into book response DTO
+        List<BookResponseDTO> booksWrittenDTO = new ArrayList<>();
+        for(Book b: booksWritten) {
+            //create new object
+            BookResponseDTO bookResponseDTO = new BookResponseDTO();
+
+            //set attributes
+            bookResponseDTO.setGenre(b.getGenre());
+            bookResponseDTO.setName(b.getName());
+            bookResponseDTO.setPages(b.getPages());
+            bookResponseDTO.setRating(b.getRating());
+
+            //add bookResponseDTO to booksWritten (list)\
+            booksWrittenDTO.add(bookResponseDTO);
+        }
+
+        //set attributes for authorResponseDTO
+        authorResponseDTO.setAge(author.getAge());
+        authorResponseDTO.setCountry(author.getCountry());
+        authorResponseDTO.setName(author.getName());
+        authorResponseDTO.setBooksWritten(booksWrittenDTO);
+
+        return authorResponseDTO;
     }
 }
